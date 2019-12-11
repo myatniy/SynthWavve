@@ -1,13 +1,13 @@
 #define PLUG_MFR "IlyaVarabei"
-#define PLUG_NAME "DistortionEffect"
+#define PLUG_NAME "Synthwavve"
 
 #define PLUG_CLASS_NAME DistortionEffect
 
 #define BUNDLE_MFR "IlyaVarabei"
-#define BUNDLE_NAME "DistortionEffect"
+#define BUNDLE_NAME "Synthwavve"
 
 #define PLUG_ENTRY DistortionEffect_Entry
-#define PLUG_FACTORY DistortionEffect_Factory
+//#define PLUG_FACTORY DistortionEffect_Factory
 #define PLUG_VIEW_ENTRY DistortionEffect_ViewEntry
 
 #define PLUG_ENTRY_STR "DistortionEffect_Entry"
@@ -20,10 +20,6 @@
 #define PLUG_VER 0x00010000
 #define VST3_VER_STR "1.0.0"
 
-#define PLUG_COPYRIGHT  "Copyright 2017 Acme Inc"
-
-// http://service.steinberg.de/databases/plugin.nsf/plugIn?openForm
-// 4 chars, single quotes. At least one capital letter
 #define PLUG_UNIQUE_ID 'T999'
 // make sure this is not the same as BUNDLE_MFR
 #define PLUG_MFR_ID 'SYNT'
@@ -46,27 +42,35 @@
 instrument determined by PLUG _IS _INST
 */
 
+// #define PLUG_CHANNEL_IO "1-1 2-2"
+#if (defined(AAX_API) || defined(RTAS_API)) 
 #define PLUG_CHANNEL_IO "1-1 2-2"
+#else
+// no audio input. mono or stereo output
+#define PLUG_CHANNEL_IO "0-1 0-2"
+#endif
 
 #define PLUG_LATENCY 0
-#define PLUG_IS_INST 0
+#define PLUG_IS_INST 1
 
 // if this is 0 RTAS can't get tempo info
-#define PLUG_DOES_MIDI 0
+#define PLUG_DOES_MIDI 1
 
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // Unique IDs for each image resource.
-#define KNOB_ID 101
-#define BACKGROUND_ID 102
+#define BG_ID         101
+#define WHITE_KEY_ID  102
+#define BLACK_KEY_ID  103
 
 // Image resource locations for this plug.
-#define KNOB_FN "resources/img/knob.png"
-#define BACKGROUND_FN "resources/img/background.png"
+#define BG_FN         "resources/img/bg.png"
+#define WHITE_KEY_FN  "resources/img/whitekey.png"
+#define BLACK_KEY_FN  "resources/img/blackkey.png"
 
 // GUI default dimensions
-#define GUI_WIDTH 280
-#define GUI_HEIGHT 230
+#define GUI_WIDTH 434
+#define GUI_HEIGHT 66
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)
