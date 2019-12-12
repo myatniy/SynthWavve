@@ -1,6 +1,10 @@
-#include <cstring>
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
+#include "SignalPattern.h"
+
+#include <cstring>
+
+using Gallant::Signal2;
 
 class MIDIReceiver {
 private:
@@ -38,4 +42,6 @@ public:
     void onMessageReceived(IMidiMsg* midiMessage);
     inline void Flush(int nFrames) { mMidiQueue.Flush(nFrames); mOffset = 0; }
     inline void Resize(int blockSize) { mMidiQueue.Resize(blockSize); }
+    Signal2< int, int > noteOn;
+    Signal2< int, int > noteOff;
 };

@@ -42,6 +42,8 @@ DistortionEffect::DistortionEffect(IPlugInstanceInfo instanceInfo)
     AttachGraphics(pGraphics);
 
     CreatePresets();
+    mMIDIReceiver.noteOn.Connect(this, &DistortionEffect::onNoteOn);
+    mMIDIReceiver.noteOff.Connect(this, &DistortionEffect::onNoteOff);
 }
 
 DistortionEffect::~DistortionEffect() {}
@@ -64,7 +66,8 @@ void DistortionEffect::ProcessDoubleReplacing(double** inputs, double** outputs,
         else {
             mOscillator.setMuted(true);
         }
-        leftOutput[i] = rightOutput[i] = mOscillator.nextSample() * velocity / 127.0;
+        // leftOutput[i] = rightOutput[i] = mOscillator.nextSample() * velocity / 127.0;
+        leftOutput[i] = rightOutput[i] = mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0;
     }
 
     mMIDIReceiver.Flush(nFrames);
@@ -75,6 +78,7 @@ void DistortionEffect::Reset()
     TRACE;
     IMutexLock lock(this);
     mOscillator.setSampleRate(GetSampleRate());
+    mEnvelopeGenerator.setSampleRate(GetSampleRate());
 }
 
 void DistortionEffect::OnParamChange(int paramIdx)

@@ -27,6 +27,8 @@ void MIDIReceiver::advance() {
                 mLastNoteNumber = noteNumber;
                 mLastFrequency = noteNumberToFrequency(mLastNoteNumber);
                 mLastVelocity = velocity;
+                // Emit a "note on" signal:
+                noteOn(noteNumber, velocity);
             }
         }
         else {
@@ -37,8 +39,7 @@ void MIDIReceiver::advance() {
             // If the last note was released, nothing should play:
             if (noteNumber == mLastNoteNumber) {
                 mLastNoteNumber = -1;
-                mLastFrequency = -1;
-                mLastVelocity = 0;
+                noteOff(noteNumber, mLastVelocity);
             }
         }
         mMidiQueue.Remove();
