@@ -1,10 +1,11 @@
 #include <math.h>
 
 enum OscillatorMode {
-    OSCILLATOR_MODE_SINE,
+    OSCILLATOR_MODE_SINE = 0,
     OSCILLATOR_MODE_SAW,
     OSCILLATOR_MODE_SQUARE,
-    OSCILLATOR_MODE_TRIANGLE
+    OSCILLATOR_MODE_TRIANGLE,
+    kNumOscillatorModes
 };
 
 class Oscillator {
@@ -18,6 +19,7 @@ private:
     void updateIncrement();
     const double twoPI;
     bool isMuted;
+
 public:
     void setMode(OscillatorMode mode);
     void setFrequency(double frequency);

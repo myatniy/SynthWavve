@@ -2,6 +2,7 @@
 #include "Oscillator.h"
 #include "MIDIReceiver.h"
 #include "EnvelopeGenerator.h"
+#include "Filter.h"
 
 class DistortionEffect : public IPlug
 {
@@ -28,4 +29,7 @@ private:
     EnvelopeGenerator mEnvelopeGenerator;
     inline void onNoteOn(const int noteNumber, const int velocity) { mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK); };
     inline void onNoteOff(const int noteNumber, const int velocity) { mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE); };
+    inline void onBeganEnvelopeCycle() { mOscillator.setMuted(false); }
+    inline void onFinishedEnvelopeCycle() { mOscillator.setMuted(true); }
+    Filter mFilter;
 };
