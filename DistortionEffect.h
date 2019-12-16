@@ -19,6 +19,9 @@ public:
   static const int virtualKeyboardMinimumNoteNumber = 48;
   int lastVirtualKeyboardNoteNumber;
 
+  inline void onBeganEnvelopeCycle() { mOscillator.setMuted(false); }
+  inline void onFinishedEnvelopeCycle() { mOscillator.setMuted(true); }
+
 private:
     double mFrequency;
     void CreatePresets();
@@ -27,9 +30,20 @@ private:
     IControl* mVirtualKeyboard;
     void processVirtualKeyboard();
     EnvelopeGenerator mEnvelopeGenerator;
-    inline void onNoteOn(const int noteNumber, const int velocity) { mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK); };
-    inline void onNoteOff(const int noteNumber, const int velocity) { mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE); };
-    inline void onBeganEnvelopeCycle() { mOscillator.setMuted(false); }
-    inline void onFinishedEnvelopeCycle() { mOscillator.setMuted(true); }
+
+    inline void onNoteOn(const int noteNumber, const int velocity) {
+      mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+      mFilterEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+    };
+    inline void onNoteOff(const int noteNumber, const int velocity) {
+      mEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
+      mFilterEnvelopeGenerator.enterStage(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE);
+    };
+
     Filter mFilter;
+    EnvelopeGenerator mFilterEnvelopeGenerator;
+    double filterEnvelopeAmount;
+
+    Oscillator Lfo;
+    double LfoFilterModAmount;
 };

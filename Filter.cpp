@@ -2,6 +2,8 @@
 
 // Infinite Impulse Response (IIR) Filter
 double Filter::process(double inputValue) {
+  if (inputValue == 0.0) return inputValue;
+  double calculatedCutoff = getCalculatedCutoff();
   buf0 += cutoff * (inputValue - buf0 + feedbackAmount * (buf0 - buf1));
   buf1 += cutoff * (buf0 - buf1);
   buf2 += cutoff * (buf1 - buf2);

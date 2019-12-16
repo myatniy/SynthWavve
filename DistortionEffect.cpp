@@ -3,7 +3,6 @@
 #include "IControl.h"
 #include "IKeyboardControl.h"
 #include "resource.h"
-//#include "DistortionEffect.rc"
 
 #include <math.h>
 #include <algorithm>
@@ -37,9 +36,10 @@ enum ELayout
 };
 
 DistortionEffect::DistortionEffect(IPlugInstanceInfo instanceInfo) 
-    : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo),
-        lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1) {
-
+: IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), 
+lastVirtualKeyboardNoteNumber(virtualKeyboardMinimumNoteNumber - 1), 
+filterEnvelopeAmount(0.0),
+LfoFilterModAmount(0.1) {
   TRACE;
 
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight);
@@ -79,8 +79,6 @@ DistortionEffect::DistortionEffect(IPlugInstanceInfo instanceInfo)
   GetParam(mRelease)->SetShape(3);
   pGraphics->AttachControl(new IKnobMultiControl(this, 346, 36, mRelease, &knobBitmap));
 
-  AttachGraphics(pGraphics);
-
   // Filter
   GetParam(mFilterMode)->InitEnum("Filter Mode", Filter::FILTER_MODE_LOWPASS, Filter::kNumFilterModes);
   IBitmap filtermodeBitmap = pGraphics->LoadIBitmap(FILTER_ID, FILTER_FN, 3);
@@ -96,13 +94,41 @@ DistortionEffect::DistortionEffect(IPlugInstanceInfo instanceInfo)
   GetParam(mFilterResonance)->InitDouble("Resonance", 0.01, 0.01, 1.0, 0.001);
   pGraphics->AttachControl(new IKnobMultiControl(this, 61, 177, mFilterResonance, &smallKnobBitmap));
 
+  // Knobs for filter envelope
+  // Attack knob
+  GetParam(mFilterAttack)->InitDouble("Filter Env Attack", 0.01, 0.01, 10.0, 0.001);
+  GetParam(mFilterAttack)->SetShape(3);
+  pGraphics->AttachControl(new IKnobMultiControl(this, 140, 178, mFilterAttack, &smallKnobBitmap));
+  // Decay knob:
+  GetParam(mFilterDecay)->InitDouble("Filter Env Decay", 0.5, 0.01, 15.0, 0.001);
+  GetParam(mFilterDecay)->SetShape(3);
+  pGraphics->AttachControl(new IKnobMultiControl(this, 196, 178, mFilterDecay, &smallKnobBitmap));
+  // Sustain knob:
+  GetParam(mFilterSustain)->InitDouble("Filter Env Sustain", 0.1, 0.001, 1.0, 0.001);
+  GetParam(mFilterSustain)->SetShape(2);
+  pGraphics->AttachControl(new IKnobMultiControl(this, 254, 178, mFilterSustain, &smallKnobBitmap));
+  // Release knob:
+  GetParam(mFilterRelease)->InitDouble("Filter Env Release", 1.0, 0.001, 15.0, 0.001);
+  GetParam(mFilterRelease)->SetShape(3);
+  pGraphics->AttachControl(new IKnobMultiControl(this, 310, 178, mFilterRelease, &smallKnobBitmap));
+
+  // Filter envelope amount knob:
+  GetParam(mFilterEnvelopeAmount)->InitDouble("Filter Env Amount", 0.0, -1.0, 1.0, 0.001);
+  pGraphics->AttachControl(new IKnobMultiControl(this, 366, 178, mFilterEnvelopeAmount, &smallKnobBitmap));
+
+  AttachGraphics(pGraphics);
+
   CreatePresets();
+
   mMIDIReceiver.noteOn.Connect(this, &DistortionEffect::onNoteOn);
   mMIDIReceiver.noteOff.Connect(this, &DistortionEffect::onNoteOff);
 
   mEnvelopeGenerator.beganEnvelopeCycle.Connect(this, &DistortionEffect::onBeganEnvelopeCycle);
   mEnvelopeGenerator.finishedEnvelopeCycle.Connect(this, &DistortionEffect::onFinishedEnvelopeCycle);
 
+  Lfo.setMode(OSCILLATOR_MODE_TRIANGLE);
+  Lfo.setFrequency(6.0);
+  Lfo.setMuted(false);
 }
 
 DistortionEffect::~DistortionEffect() {}
@@ -115,10 +141,12 @@ void DistortionEffect::ProcessDoubleReplacing(double** inputs, double** outputs,
 
   processVirtualKeyboard();
   for (int i = 0; i < nFrames; ++i) {
-      mMIDIReceiver.advance();
-      int velocity = mMIDIReceiver.getLastVelocity();
-      mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
-      leftOutput[i] = rightOutput[i] = mFilter.process(mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0);
+    mMIDIReceiver.advance();
+    int velocity = mMIDIReceiver.getLastVelocity();
+    double lfoFilterModulation = Lfo.nextSample() * LfoFilterModAmount;
+    mOscillator.setFrequency(mMIDIReceiver.getLastFrequency());
+    mFilter.setCutoffMod((mFilterEnvelopeGenerator.nextSample() * filterEnvelopeAmount) + lfoFilterModulation);
+    leftOutput[i] = rightOutput[i] = mFilter.process(mOscillator.nextSample() * mEnvelopeGenerator.nextSample() * velocity / 127.0);
   }
 
   mMIDIReceiver.Flush(nFrames);
@@ -129,6 +157,8 @@ void DistortionEffect::Reset() {
     IMutexLock lock(this);
     mOscillator.setSampleRate(GetSampleRate());
     mEnvelopeGenerator.setSampleRate(GetSampleRate());
+    mFilterEnvelopeGenerator.setSampleRate(GetSampleRate());
+    Lfo.setSampleRate(GetSampleRate());
 }
 
 void DistortionEffect::OnParamChange(int paramIdx) {
@@ -151,6 +181,21 @@ void DistortionEffect::OnParamChange(int paramIdx) {
     break;
   case mFilterMode:
     mFilter.setFilterMode(static_cast<Filter::FilterMode>(GetParam(paramIdx)->Int()));
+    break;
+  case mFilterAttack:
+    mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK, GetParam(paramIdx)->Value());
+    break;
+  case mFilterDecay:
+    mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_DECAY, GetParam(paramIdx)->Value());
+    break;
+  case mFilterSustain:
+    mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_SUSTAIN, GetParam(paramIdx)->Value());
+    break;
+  case mFilterRelease:
+    mFilterEnvelopeGenerator.setStageValue(EnvelopeGenerator::ENVELOPE_STAGE_RELEASE, GetParam(paramIdx)->Value());
+    break;
+  case mFilterEnvelopeAmount:
+    filterEnvelopeAmount = GetParam(paramIdx)->Value();
     break;
   }
 }
