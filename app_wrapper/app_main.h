@@ -12,9 +12,9 @@
 
  App settings are stored in a .ini file. The location is as follows:
 
- Windows7: C:\Users\USERNAME\AppData\Local\DistortionEffect\settings.ini
- Windows XP/Vista: C:\Documents and Settings\USERNAME\Local Settings\Application Data\DistortionEffect\settings.ini
- OSX: /Users/USERNAME/Library/Application\ Support/DistortionEffect/settings.ini
+ Windows7: C:\Users\USERNAME\AppData\Local\SynthWavve\settings.ini
+ Windows XP/Vista: C:\Documents and Settings\USERNAME\Local Settings\Application Data\SynthWavve\settings.ini
+ OSX: /Users/USERNAME/Library/Application\ Support/SynthWavve/settings.ini
 
 */
 
@@ -44,7 +44,7 @@
 #include <string>
 #include <vector>
 
-#include "../DistortionEffect.h" // change this to match your iplug plugin .h file
+#include "../SynthWavve.h" // change this to match your iplug plugin .h file
 
 typedef unsigned short UInt16;
 

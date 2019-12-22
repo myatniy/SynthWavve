@@ -6,7 +6,7 @@ REM - zipping requires 7zip in %ProgramFiles%\7-Zip\7z.exe
 REM - building installer requires innotsetup in "%ProgramFiles(x86)%\Inno Setup 5\iscc"
 REM - AAX codesigning requires ashelper tool added to %PATH% env variable and aax.key/.crt in .\..\..\..\Certificates\
 
-echo Making DistortionEffect win distribution ...
+echo Making SynthWavve win distribution ...
 
 echo ------------------------------------------------------------------
 echo Updating version numbers ...
@@ -33,10 +33,10 @@ REM - set preprocessor macros like this, for instance to enable demo build:
 REM - SET CMDLINE_DEFINES="DEMO_VERSION"
 
 REM - Could build individual targets like this:
-REM - msbuild DistortionEffect-app.vcxproj /p:configuration=release /p:platform=win32
+REM - msbuild SynthWavve-app.vcxproj /p:configuration=release /p:platform=win32
 
-msbuild DistortionEffect.sln /p:configuration=release /p:platform=win32 /nologo /noconsolelogger /fileLogger /v:quiet /flp:logfile=build-win.log;errorsonly 
-msbuild DistortionEffect.sln /p:configuration=release /p:platform=x64 /nologo /noconsolelogger /fileLogger /v:quiet /flp:logfile=build-win.log;errorsonly;append
+msbuild SynthWavve.sln /p:configuration=release /p:platform=win32 /nologo /noconsolelogger /fileLogger /v:quiet /flp:logfile=build-win.log;errorsonly 
+msbuild SynthWavve.sln /p:configuration=release /p:platform=x64 /nologo /noconsolelogger /fileLogger /v:quiet /flp:logfile=build-win.log;errorsonly;append
 
 #echo ------------------------------------------------------------------
 #echo Code sign aax binary...
@@ -51,18 +51,18 @@ echo Making Installer ...
 if exist "%ProgramFiles(x86)%" (goto 64-Bit-is) else (goto 32-Bit-is)
 
 :32-Bit-is
-"%ProgramFiles%\Inno Setup 5\iscc" /cc ".\installer\DistortionEffect.iss"
+"%ProgramFiles%\Inno Setup 5\iscc" /cc ".\installer\SynthWavve.iss"
 goto END-is
 
 :64-Bit-is
-"%ProgramFiles(x86)%\Inno Setup 5\iscc" /cc ".\installer\DistortionEffect.iss"
+"%ProgramFiles(x86)%\Inno Setup 5\iscc" /cc ".\installer\SynthWavve.iss"
 goto END-is
 
 :END-is
 
 REM - ZIP
-REM - "%ProgramFiles%\7-Zip\7z.exe" a .\installer\DistortionEffect-win-32bit.zip .\build-win\app\win32\bin\DistortionEffect.exe .\build-win\vst3\win32\bin\DistortionEffect.vst3 .\build-win\vst2\win32\bin\DistortionEffect.dll .\build-win\rtas\bin\DistortionEffect.dpm .\build-win\rtas\bin\DistortionEffect.dpm.rsr .\build-win\aax\bin\DistortionEffect.aaxplugin* .\installer\license.rtf .\installer\readmewin.rtf
-REM - "%ProgramFiles%\7-Zip\7z.exe" a .\installer\DistortionEffect-win-64bit.zip .\build-win\app\x64\bin\DistortionEffect.exe .\build-win\vst3\x64\bin\DistortionEffect.vst3 .\build-win\vst2\x64\bin\DistortionEffect.dll .\installer\license.rtf .\installer\readmewin.rtf
+REM - "%ProgramFiles%\7-Zip\7z.exe" a .\installer\SynthWavve-win-32bit.zip .\build-win\app\win32\bin\SynthWavve.exe .\build-win\vst3\win32\bin\SynthWavve.vst3 .\build-win\vst2\win32\bin\SynthWavve.dll .\build-win\rtas\bin\SynthWavve.dpm .\build-win\rtas\bin\SynthWavve.dpm.rsr .\build-win\aax\bin\SynthWavve.aaxplugin* .\installer\license.rtf .\installer\readmewin.rtf
+REM - "%ProgramFiles%\7-Zip\7z.exe" a .\installer\SynthWavve-win-64bit.zip .\build-win\app\x64\bin\SynthWavve.exe .\build-win\vst3\x64\bin\SynthWavve.vst3 .\build-win\vst2\x64\bin\SynthWavve.dll .\installer\license.rtf .\installer\readmewin.rtf
 
 echo ------------------------------------------------------------------
 echo Printing log file to console...

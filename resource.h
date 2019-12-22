@@ -1,20 +1,20 @@
 #define PLUG_MFR "IlyaVarabei"
 #define PLUG_NAME "Synthwavve"
 
-#define PLUG_CLASS_NAME DistortionEffect
+#define PLUG_CLASS_NAME SynthWavve
 
 #define BUNDLE_MFR "IlyaVarabei"
 #define BUNDLE_NAME "Synthwavve"
 
-#define PLUG_ENTRY DistortionEffect_Entry
-//#define PLUG_FACTORY DistortionEffect_Factory
-#define PLUG_VIEW_ENTRY DistortionEffect_ViewEntry
+#define PLUG_ENTRY SynthWavve_Entry
+//#define PLUG_FACTORY SynthWavve_Factory
+#define PLUG_VIEW_ENTRY SynthWavve_ViewEntry
 
-#define PLUG_ENTRY_STR "DistortionEffect_Entry"
-#define PLUG_VIEW_ENTRY_STR "DistortionEffect_ViewEntry"
+#define PLUG_ENTRY_STR "SynthWavve_Entry"
+#define PLUG_VIEW_ENTRY_STR "SynthWavve_ViewEntry"
 
-#define VIEW_CLASS DistortionEffect_View
-#define VIEW_CLASS_STR "DistortionEffect_View"
+#define VIEW_CLASS SynthWavve_View
+#define VIEW_CLASS_STR "SynthWavve_View"
 
 // Format        0xMAJR.MN.BG - in HEX! so version 10.1.5 would be 0x000A0105
 #define PLUG_VER 0x00010000
@@ -33,7 +33,7 @@
 #endif
 
 #define PLUG_MFR_PT "IlyaVarabei\nIlyaVarabei\nAcme"
-#define PLUG_NAME_PT "DistortionEffect\nIPEF"
+#define PLUG_NAME_PT "SynthWavve\nIPEF"
 #define PLUG_TYPE_PT "Effect"
 #define PLUG_DOES_AUDIOSUITE 1
 
@@ -64,8 +64,7 @@ instrument determined by PLUG _IS _INST
 #define BLACK_KEY_ID 103
 #define WAVEFORM_ID 104
 #define KNOB_ID 105
-#define KNOB_SMALL_ID 106
-#define FILTER_ID 107
+#define FILTER_ID 106
 
 // Image resource locations for this plug.
 #define BG_FN "resources/img/bg.png"
@@ -77,8 +76,8 @@ instrument determined by PLUG _IS _INST
 #define FILTER_FN "resources/img/filter.png"
 
 // GUI default dimensions
-#define GUI_WIDTH 434
-#define GUI_HEIGHT 296
+#define GUI_WIDTH 869
+#define GUI_HEIGHT 329
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)

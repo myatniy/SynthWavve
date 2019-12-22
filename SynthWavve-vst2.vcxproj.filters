@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="SynthWavve.cpp" />
+    <ClCompile Include="..\..\WDL\IPlug\IPlugVST.cpp">
+      <Filter>vst2</Filter>
+    </ClCompile>
+    <ClCompile Include="Oscillator.cpp" />
+    <ClCompile Include="MIDIReceiver.cpp" />
+    <ClCompile Include="EnvelopeGenerator.cpp" />
+    <ClCompile Include="Filter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SynthWavve.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\WDL\IPlug\IPlugVST.h">
+      <Filter>vst2</Filter>
+    </ClInclude>
+    <ClInclude Include="Oscillator.h" />
+    <ClInclude Include="MIDIReceiver.h" />
+    <ClInclude Include="EnvelopeGenerator.h" />
+    <ClInclude Include="SignalPattern.h" />
+    <ClInclude Include="Delegate.h" />
+    <ClInclude Include="Filter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SynthWavve.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="vst2">
+      <UniqueIdentifier>{ea16de74-9d15-4c60-ba09-d0924088d3e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\img\knob_s.png" />
+    <Image Include="resources\img\filter.png" />
+    <Image Include="resources\img\bg.png" />
+    <Image Include="resources\img\whitekey.png" />
+    <Image Include="resources\img\blackkey.png" />
+    <Image Include="resources\img\waveform.png" />
+    <Image Include="resources\img\knob.png" />
+  </ItemGroup>
+</Project>
