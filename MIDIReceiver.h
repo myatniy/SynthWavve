@@ -2,7 +2,7 @@
 #include "IMidiQueue.h"
 #include "SignalPattern.h"
 
-#include <cstring>
+//#include <cstring>
 
 using Gallant::Signal2;
 
@@ -27,11 +27,11 @@ public:
   inline bool getKeyStatus(int keyIndex) const { return mKeyStatus[keyIndex]; }
   // Returns the number of keys currently pressed
   inline int getNumKeys() const { return mNumKeys; }
-  // Returns the last pressed note number
   void advance();
   void onMessageReceived(IMidiMsg* midiMessage);
   inline void Flush(int nFrames) { mMidiQueue.Flush(nFrames); mOffset = 0; }
   inline void Resize(int blockSize) { mMidiQueue.Resize(blockSize); }
+
   Signal2< int, int > noteOn;
   Signal2< int, int > noteOff;
 };

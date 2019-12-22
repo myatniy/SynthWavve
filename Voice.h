@@ -5,7 +5,6 @@
 #include "Filter.h"
 
 class Voice {
-
 public:
   friend class VoiceManager;
   Voice()

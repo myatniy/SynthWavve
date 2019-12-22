@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cmath>
 
 class Filter {
@@ -12,7 +13,7 @@ public:
   Filter() :
     cutoff(0.99),
     resonance(0.0),
-    cutoffMode(0.0),
+    cutoffMod(0.0),
     mode(FILTER_MODE_LOWPASS),
     buf0(0.0),
     buf1(0.0),
@@ -25,9 +26,15 @@ public:
   inline void setCutoff(double newCutoff) { cutoff = newCutoff; calculateFeedbackAmount(); };
   inline void setResonance(double newResonance) { resonance = newResonance; calculateFeedbackAmount(); };
   inline void setFilterMode(FilterMode newMode) { mode = newMode; }
-  inline void setCutoffMod(double newCutoffMode) { cutoffMode = newCutoffMode; calculateFeedbackAmount(); }
-  void reset() { buf0 = buf1 = buf2 = buf3 = 0.0; }
 
+  inline void setCutoffMod(double newCutoffMod) {
+    cutoffMod = newCutoffMod;
+    calculateFeedbackAmount();
+  }
+
+  void reset() {
+    buf0 = buf1 = buf2 = buf3 = 0.0;
+  }
 private:
   double cutoff;
   double resonance;
@@ -41,9 +48,9 @@ private:
   double buf2;
   double buf3;
 
-  double cutoffMode;
+  double cutoffMod;
 
   inline double getCalculatedCutoff() const {
-    return fmax(fmin(cutoff + cutoffMode, 0.99), 0.01);
+    return fmax(fmin(cutoff + cutoffMod, 0.99), 0.01);
   };
 };

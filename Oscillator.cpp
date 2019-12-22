@@ -16,23 +16,15 @@ void Oscillator::setSampleRate(double sampleRate) {
   updateIncrement();
 }
 
-void Oscillator::updateIncrement() {
-  double pitchModAsFrequency = pow(2.0, fabs(mPitchMod) * 14.0) - 1;
-  if (mPitchMod < 0) {
-    pitchModAsFrequency = -pitchModAsFrequency;
-  }
-  double calculatedFrequency = fmin(fmax(mFrequency + pitchModAsFrequency, 0), mSampleRate / 2.0);
-  mPhaseIncrement = calculatedFrequency * 2 * mPI / mSampleRate;
-}
-
 void Oscillator::generate(double* buffer, int nFrames) {
+  const double twoPI = 2 * mPI;
   switch (mOscillatorMode) {
   case OSCILLATOR_MODE_SINE:
     for (int i = 0; i < nFrames; i++) {
       buffer[i] = sin(mPhase);
       mPhase += mPhaseIncrement;
       while (mPhase >= twoPI) {
-         mPhase -= twoPI;
+        mPhase -= twoPI;
       }
     }
     break;
@@ -84,6 +76,15 @@ double Oscillator::nextSample() {
 void Oscillator::setPitchMod(double amount) {
   mPitchMod = amount;
   updateIncrement();
+}
+
+void Oscillator::updateIncrement() {
+  double pitchModAsFrequency = pow(2.0, fabs(mPitchMod) * 14.0) - 1;
+  if (mPitchMod < 0) {
+    pitchModAsFrequency = -pitchModAsFrequency;
+  }
+  double calculatedFrequency = fmin(fmax(mFrequency + pitchModAsFrequency, 0), mSampleRate / 2.0);
+  mPhaseIncrement = calculatedFrequency * 2 * mPI / mSampleRate;
 }
 
 double Oscillator::naiveWaveformForMode(OscillatorMode mode) {
