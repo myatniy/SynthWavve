@@ -14,7 +14,7 @@ public:
   void setFrequency(double frequency);
   void setSampleRate(double sampleRate);
   void generate(double* buffer, int nFrames);
-  double nextSample();
+  virtual double nextSample();
   void setPitchMod(double amount);
   void reset() { mPhase = 0.0; }
   
@@ -27,7 +27,8 @@ public:
     mPitchMod(0.0),
     mPhase(0.0) { updateIncrement(); };
 
-private:
+protected:
+  double naiveWaveformForMode(OscillatorMode mode);
   OscillatorMode mOscillatorMode;
   static double mSampleRate;
   const double mPI;

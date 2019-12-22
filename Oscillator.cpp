@@ -73,28 +73,7 @@ void Oscillator::generate(double* buffer, int nFrames) {
 }
 
 double Oscillator::nextSample() {
-  double value = 0.0;
-
-  switch (mOscillatorMode) {
-  case OSCILLATOR_MODE_SINE:
-    value = sin(mPhase);
-    break;
-  case OSCILLATOR_MODE_SAW:
-    value = 1.0 - (2.0 * mPhase / twoPI);
-    break;
-  case OSCILLATOR_MODE_SQUARE:
-    if (mPhase <= mPI) {
-       value = 1.0;
-    }
-    else {
-       value = -1.0;
-    }
-    break;
-  case OSCILLATOR_MODE_TRIANGLE:
-    value = -1.0 + (2.0 * mPhase / twoPI);
-    value = 2.0 * (fabs(value) - 0.5);
-    break;
-  }
+  double value = naiveWaveformForMode(mOscillatorMode);
   mPhase += mPhaseIncrement;
   while (mPhase >= twoPI) {
     mPhase -= twoPI;
@@ -105,4 +84,31 @@ double Oscillator::nextSample() {
 void Oscillator::setPitchMod(double amount) {
   mPitchMod = amount;
   updateIncrement();
+}
+
+double Oscillator::naiveWaveformForMode(OscillatorMode mode) {
+  double value;
+  switch (mode) {
+  case OSCILLATOR_MODE_SINE:
+    value = sin(mPhase);
+    break;
+  case OSCILLATOR_MODE_SAW:
+    value = (2.0 * mPhase / twoPI) - 1.0;
+    break;
+  case OSCILLATOR_MODE_SQUARE:
+    if (mPhase < mPI) {
+      value = 1.0;
+    }
+    else {
+      value = -1.0;
+    }
+    break;
+  case OSCILLATOR_MODE_TRIANGLE:
+    value = -1.0 + (2.0 * mPhase / twoPI);
+    value = 2.0 * (fabs(value) - 0.5);
+    break;
+  default:
+    break;
+  }
+  return value;
 }
